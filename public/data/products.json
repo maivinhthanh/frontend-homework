@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Apple",
+    "price": 50000,
+    "rate": "kg"
+  },
+  {
+    "id": 2,
+    "name": "Banana",
+    "price": 30000,
+    "rate": "bunch"
+  },
+  {
+    "id": 3,
+    "name": "Orange",
+    "price": 56000,
+    "rate": "kg"
+  },
+  {
+    "id": 4,
+    "name": "Grapes",
+    "price": 90000,
+    "rate": "bunch"
+  },
+  {
+    "id": 5,
+    "name": "Mango",
+    "price": 4000,
+    "rate": "kg"
+  },
+  {
+    "id": 6,
+    "name": "Pineapple",
+    "price": 12000,
+    "rate": "kg"
+  },
+  {
+    "id": 7,
+    "name": "Strawberry",
+    "price": 33000,
+    "rate": "kg"
+  },
+  {
+    "id": 8,
+    "name": "Watermelon",
+    "price": 12000,
+    "rate": "kg"
+  },
+  {
+    "id": 9,
+    "name": "Blueberry",
+    "price": 44000,
+    "rate": "kg"
+  },
+  {
+    "id": 10,
+    "name": "Kiwi",
+    "price": 100000,
+    "rate": "kg"
+  }
+]
