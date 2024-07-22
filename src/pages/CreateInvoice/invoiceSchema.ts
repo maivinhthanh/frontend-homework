@@ -1,5 +1,6 @@
-import { InvoiceStatus } from '@/types';
+import { Invoice, InvoiceStatus } from '@/types';
 import * as Yup from 'yup';
+import dayjs from 'dayjs';
 
 const productSchema = Yup.object().shape({
   name: Yup.string().required('Product name is required'),
@@ -14,7 +15,7 @@ const invoiceSchema = Yup.object().shape({
   type: Yup.string().required('Type is required'),
   prepared: Yup.string().required('Prepared by is required'),
   contractor: Yup.string().required('Contractor is required'),
-  format: Yup.string().required('Format is required'),
+  vat: Yup.string().required('vat is required'),
   bankAccount: Yup.string().required('Bank account is required'),
   invoiceDate: Yup.date().required('Invoice date is required'),
   dueDate: Yup.date().required('Due date is required').min(Yup.ref('invoiceDate'), 'Due date cannot be before invoice date'),
@@ -24,4 +25,21 @@ const invoiceSchema = Yup.object().shape({
   createDate: Yup.date().required('Create date is required'),
 });
 
+export const initialValues: Invoice = {
+  id: '',
+  type: '',
+  prepared: '',
+  contractor: '',
+  vat: '',
+  bankAccount: '',
+  invoiceDate: dayjs(),
+  dueDate: dayjs(),
+  payment: 'cash',
+  products: [],
+  status: 'Pending',
+  createDate: dayjs(),
+  category: 'inprogess',
+};
+
 export default invoiceSchema;
+

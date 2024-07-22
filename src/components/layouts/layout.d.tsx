@@ -39,12 +39,6 @@ export const MENU_ITEMS: MenuItem[] = [
         path: routeStrings.invoices,
         icon: <DescriptionIcon />,
       },
-      {
-        key: MENU_STRINGS.InvoiceDetail,
-        label: 'Invoice Detail',
-        path: routeStrings.invoiceDetail,
-        icon: <InsertDriveFileIcon />,
-      }
     ]
   },
 ];

@@ -21,7 +21,7 @@ const routes: RouteObject[] = [
             element: <Invoice />,
           },
           {
-            path: routeStrings.invoiceDetail,
+            path: routeStrings.invoiceDetail + '/:id',
             element: <InvoiceDetail />,
           },
           {

@@ -1,26 +1,30 @@
 import { Invoice } from '@/types';
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface IInvoiceState {
   list: Invoice[];
-  draftList: Invoice[];
 }
 
 const initialState: IInvoiceState = {
   list: [],
-  draftList: [],
 };
 
 const invoiceSlice = createSlice({
-  name: 'ui',
+  name: 'invoice',
   initialState,
   reducers: {
-    addInvoice: (state, action: { payload: Invoice }) => {
-      state.list = [...state.list, action.payload];
+    addInvoice: (state, action: PayloadAction<Invoice>) => {
+      state.list.push(action.payload);
+    },
+    editInvoice: (state, action: PayloadAction<Invoice>) => {
+      const indexInvoice = state.list.findIndex((e) => e.id === action.payload.id);
+      if (indexInvoice !== -1) {
+        state.list[indexInvoice] = action.payload;
+      }
     },
   },
 });
 
-export const { addInvoice } = invoiceSlice.actions;
+export const { addInvoice, editInvoice } = invoiceSlice.actions;
 
 export default invoiceSlice.reducer;

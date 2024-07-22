@@ -4,7 +4,7 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 import { persistReducer, persistStore } from 'redux-persist';
 
 const persistConfig = {
-  key: 'root',
+  key: 'inovice',
   storage,
 };
 const invoicePersistedReducer = persistReducer(persistConfig, invoiceReducer);

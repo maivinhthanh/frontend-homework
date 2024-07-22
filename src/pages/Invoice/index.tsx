@@ -1,16 +1,6 @@
 import ListPage from '@/components/listpage/ListPage';
 import routeStrings from '@/routes/routeStrings';
-import {
-  Button,
-  Chip,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -19,7 +9,7 @@ import {
   GridRowSelectionModel,
 } from '@mui/x-data-grid';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '@/redux/store';
 import { FilterCriteria, FilterInvoice, Invoice as InvoiceType } from '@/types';
@@ -84,6 +74,7 @@ const Invoice = () => {
     const buildParams = () => {
       const params: any = {};
       let dataList: InvoiceType[] = dataBackup.current;
+      console.log('dataList',dataList);
       if (filterCriteria.filters.category && filterCriteria.filters.category !== 'all') {
         params.category = filterCriteria.filters.category;
         dataList = dataList.filter((e) => e.category === filterCriteria.filters.category);
@@ -199,13 +190,13 @@ const Invoice = () => {
         </FormControl>
         <DatePicker
           label="Start Date"
-          // value={dayjs(filterCriteria.filters.startDate) || ''}
+          value={dayjs(filterCriteria.filters.startDate) || null}
           onChange={(e) => handleChangeDateFilter(e, 'startDate')}
           sx={{ width: '100%' }}
         />
         <DatePicker
           label="End Date"
-          // value={dayjs(filterCriteria.filters.endDate) || ''}
+          value={dayjs(filterCriteria.filters.endDate) || ''}
           onChange={(e) => handleChangeDateFilter(e, 'endDate')}
           sx={{ width: '100%' }}
         />
@@ -237,6 +228,11 @@ const Invoice = () => {
           <Typography variant="subtitle1" color="primary">
             {params.colDef.headerName}
           </Typography>
+        ),
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <NavLink to={`${routeStrings.invoiceDetail}/${params.value}`}>{params.value}</NavLink>
+          </>
         ),
       },
       {
@@ -280,14 +276,16 @@ const Invoice = () => {
             {params.colDef.headerName}
           </Typography>
         ),
-        renderCell: (params: GridRenderCellParams) => (
-          <>
-            <Chip label={params.value} />
-          </>
-        ),
+        // renderCell: (params: GridRenderCellParams) => (
+        //   <>
+        //     <Chip label={params.value} />
+        //   </>
+        // ),
       },
     ];
   }, []);
+
+  console.log('data', data);
 
   return (
     <>
