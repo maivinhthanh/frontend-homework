@@ -1,6 +1,16 @@
 import ListPage from '@/components/listpage/ListPage';
 import routeStrings from '@/routes/routeStrings';
-import { Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import {
+  Button,
+  Chip,
+  FormControl,
+  InputLabel,
+  Menu,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -8,7 +18,7 @@ import {
   GridRenderCellParams,
   GridRowSelectionModel,
 } from '@mui/x-data-grid';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '@/redux/store';
@@ -19,6 +29,7 @@ import utc from 'dayjs/plugin/utc';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { formatDate } from '@/constants/common';
 import { DatePicker } from '@mui/x-date-pickers';
+import Filter from './Filter';
 
 dayjs.extend(utc);
 dayjs.extend(customParseFormat);
@@ -32,7 +43,7 @@ const Invoice = () => {
   const dataBackup = useRef<InvoiceType[]>(list);
 
   const [filterCriteria, setFilterCriteria] = useState<FilterCriteria<FilterInvoice>>({
-    filters: {},
+    filters: { contractor: '', vat: '', startDate: null, endDate: null, status: '' },
     paging: {
       page: DEFAULT_INITIAL_PAGE,
       pageSize: DEFAULT_SIZE,
@@ -48,8 +59,8 @@ const Invoice = () => {
     const querystringObj = Object.fromEntries(searchParams);
     const transformToFilterCriteria = {
       contract: querystringObj?.contract || '',
-      startDate: querystringObj?.startDate || null,
-      endDate: querystringObj?.endDate || null,
+      startDate: querystringObj?.startDate,
+      endDate: querystringObj?.endDate,
       status: querystringObj?.status || '',
       category: querystringObj?.category || 'all',
     };
@@ -59,8 +70,8 @@ const Invoice = () => {
       filters: {
         ...filterCriteria.filters,
         ...transformToFilterCriteria,
-        startDate: querystringObj?.startDate ? dayjs(dayjs.utc(querystringObj?.startDate).local()) : null,
-        endDate: querystringObj?.endDate ? dayjs(dayjs.utc(querystringObj?.endDate).local()) : null,
+        startDate: querystringObj?.startDate && dayjs(dayjs.utc(querystringObj?.startDate).local()),
+        endDate: querystringObj?.endDate && dayjs(dayjs.utc(querystringObj?.endDate).local()),
         category: querystringObj?.category || 'all',
       },
       paging: {
@@ -74,7 +85,6 @@ const Invoice = () => {
     const buildParams = () => {
       const params: any = {};
       let dataList: InvoiceType[] = dataBackup.current;
-      console.log('dataList',dataList);
       if (filterCriteria.filters.category && filterCriteria.filters.category !== 'all') {
         params.category = filterCriteria.filters.category;
         dataList = dataList.filter((e) => e.category === filterCriteria.filters.category);
@@ -124,25 +134,15 @@ const Invoice = () => {
     });
   };
 
-  const handleChangeFilter = (e: SelectChangeEvent<any>) => {
-    const { name, value } = e.target;
-    setFilterCriteria((state) => ({
-      ...state,
-      filters: {
-        ...state.filters,
-        [name]: value,
+  const resetFilter = () => {
+    setFilterCriteria({
+      filters: { contractor: '', vat: '', startDate: null, endDate: null, status: '' },
+      paging: {
+        page: DEFAULT_INITIAL_PAGE,
+        pageSize: DEFAULT_SIZE,
       },
-    }));
-  };
-
-  const handleChangeDateFilter = (e: any, name: string) => {
-    setFilterCriteria((state) => ({
-      ...state,
-      filters: {
-        ...state.filters,
-        [name]: dayjs(e).endOf('day').toISOString(),
-      },
-    }));
+      sorts: [],
+    });
   };
 
   const typeList = useMemo(() => {
@@ -173,43 +173,7 @@ const Invoice = () => {
   const filter = useMemo(() => {
     return (
       <>
-        <FormControl fullWidth>
-          <InputLabel>Document type</InputLabel>
-          <Select name="contractor" value={filterCriteria.filters.contractor} onChange={handleChangeFilter}>
-            <MenuItem value="contractor1">Contractor 1</MenuItem>
-            <MenuItem value="contractor2">Contractor 2</MenuItem>
-            <MenuItem value="contractor3">Contractor 3</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          <InputLabel>Vat</InputLabel>
-          <Select name="vat" value={filterCriteria.filters.vat} onChange={handleChangeFilter}>
-            <MenuItem value="10">10%</MenuItem>
-            <MenuItem value="20">20%</MenuItem>
-          </Select>
-        </FormControl>
-        <DatePicker
-          label="Start Date"
-          value={dayjs(filterCriteria.filters.startDate) || null}
-          onChange={(e) => handleChangeDateFilter(e, 'startDate')}
-          sx={{ width: '100%' }}
-        />
-        <DatePicker
-          label="End Date"
-          value={dayjs(filterCriteria.filters.endDate) || ''}
-          onChange={(e) => handleChangeDateFilter(e, 'endDate')}
-          sx={{ width: '100%' }}
-        />
-        <FormControl fullWidth>
-          <InputLabel>Status</InputLabel>
-          <Select name="status" value={filterCriteria.filters.status} onChange={handleChangeFilter}>
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="Paid">Paid</MenuItem>
-            <MenuItem value="Cancelled">Cancelled</MenuItem>
-            <MenuItem value="Outstanding">Outstanding</MenuItem>
-            <MenuItem value="Late">Late</MenuItem>
-          </Select>
-        </FormControl>
+        <Filter filters={filterCriteria.filters} setFilterCriteria={setFilterCriteria} resetFilter={resetFilter} />
       </>
     );
   }, [filterCriteria]);
@@ -276,16 +240,14 @@ const Invoice = () => {
             {params.colDef.headerName}
           </Typography>
         ),
-        // renderCell: (params: GridRenderCellParams) => (
-        //   <>
-        //     <Chip label={params.value} />
-        //   </>
-        // ),
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <Chip label={params.value} />
+          </>
+        ),
       },
     ];
   }, []);
-
-  console.log('data', data);
 
   return (
     <>
